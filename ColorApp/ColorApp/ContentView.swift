@@ -13,6 +13,7 @@ struct ContentView: View {
     @State private var blueSliderValue = Double.random(in: 0...255)
     @State private var greenSlidreValue = Double.random(in: 0...255)
     
+    
     var body: some View {
         VStack {
             ColorView(red: redSliderValue, blue: blueSliderValue, green: greenSlidreValue)
@@ -35,6 +36,7 @@ struct ContentView_Previews: PreviewProvider {
 struct ColorSlider: View {
     @Binding var value: Double
     let color: Color
+    @State private var alertPresented = false
     
     var valueTextField: Binding<String> {
             Binding<String>(
@@ -42,6 +44,8 @@ struct ColorSlider: View {
                 set: {
                     if let value = NumberFormatter().number(from: $0) {
                         self.value = value.doubleValue
+                    } else {
+                        alertPresented.toggle()
                     }
                 }
             )
@@ -53,8 +57,12 @@ struct ColorSlider: View {
             Slider(value: $value, in: 0...255, step: 1)
                 .accentColor(color)
             TextField("", text: valueTextField)
-                .frame(width: 45)
+                .frame(width: 50)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
+                .alert(isPresented: $alertPresented) {
+                    Alert(title: Text("Wrong Format!"), message: Text("Enter digits!"))
+                }
         }
     }
+    
 }
